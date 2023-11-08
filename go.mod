@@ -21,7 +21,7 @@ require (
 	github.com/hashicorp/terraform-registry-address v0.2.1
 	github.com/hashicorp/terraform-svchost v0.1.1
 	github.com/mitchellh/go-homedir v1.1.0
-	github.com/zclconf/go-cty v1.13.2
+	github.com/zclconf/go-cty v1.14.1
 	golang.org/x/crypto v0.11.0
 	golang.org/x/text v0.11.0
 )
@@ -32,6 +32,7 @@ require (
 	cloud.google.com/go/iam v0.5.0 // indirect
 	cloud.google.com/go/storage v1.27.0 // indirect
 	github.com/apparentlymart/go-textseg/v13 v13.0.0 // indirect
+	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
 	github.com/aws/aws-sdk-go v1.44.122 // indirect
 	github.com/bgentry/go-netrc v0.0.0-20140422174119-9fd32a8b3d3d // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
