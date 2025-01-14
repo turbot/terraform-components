@@ -14,9 +14,9 @@ on:
         default: "arm64"
 
       go_version:
-        description: "Go version to use (use 1.23)"
+        description: "Go version to use (e.g. 1.16)"
         required: true
-        default: "1.23"
+        default: "1.16"
 
 jobs:
   build-terraform:
