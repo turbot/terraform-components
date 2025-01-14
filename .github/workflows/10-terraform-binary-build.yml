@@ -1,0 +1,72 @@
+name: "10 - Terraform: Build Terraform Linux from Source"
+
+on:
+  workflow_dispatch:
+    inputs:
+      terraform_version:
+        description: "Terraform version to build (e.g., 0.11.14)"
+        required: true
+        default: 0.11.14
+
+      linux_arch:
+        description: "Linux architecture to build (e.g., arm64)"
+        required: true
+        default: "arm64"
+
+      go_version:
+        description: "Go version to use (use 1.16)"
+        required: true
+        default: "1.16"
+
+jobs:
+  build-terraform:
+    runs-on: ubuntu-latest
+
+    steps:
+      # - name: Install Build Dependencies
+      #   run: |
+      #     sudo apt-get update
+      #     sudo apt-get install -y make gcc g++ git wget unzip
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ github.event.inputs.go_version }}
+
+      - name: Download Terraform Source
+        run: |
+          export VERSION="${{ github.event.inputs.terraform_version }}"
+          git clone --branch v$VERSION --depth 1 https://github.com/hashicorp/terraform.git terraform-source
+        working-directory: ${{ github.workspace }}
+
+      - name: Build Terraform
+        run: |
+          cd terraform-source
+          CGO_ENABLED=0 GOARCH=${{ github.event.inputs.linux_arch }} GOOS=linux go build -o ./bin/terraform
+
+      - name: Upload Terraform Binary
+        uses: actions/upload-artifact@v3
+        with:
+          name: terraform-${{ github.event.inputs.terraform_version }}-linux-${{ github.event.inputs.linux_arch }}
+          path: terraform-source/bin/terraform
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        with:
+          tag_name: terraform-v${{ github.event.inputs.terraform_version }}
+          release_name: Terraform v${{ github.event.inputs.terraform_version }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+        # Step 7: Upload Binary to Release
+      - name: Upload Terraform Binary
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: terraform-source/bin/terraform
+          asset_name: terraform-${{ github.event.inputs.terraform_version }}-linux-${{ github.event.inputs.linux_arch }}
+          asset_content_type: application/octet-stream
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
