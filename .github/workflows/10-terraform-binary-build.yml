@@ -18,6 +18,9 @@ on:
         required: true
         default: "1.16"
 
+permissions:
+  contents: read
+
 jobs:
   build-terraform:
     runs-on: ubuntu-latest
@@ -28,7 +31,7 @@ jobs:
       #     sudo apt-get update
       #     sudo apt-get install -y make gcc g++ git wget unzip
       - name: Set up Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@7b8cf10d4e4a01d4992d18a89f4d7dc5a3e6d6f4 # v4
         with:
           go-version: ${{ github.event.inputs.go_version }}
 
@@ -44,14 +47,14 @@ jobs:
           CGO_ENABLED=0 GOARCH=${{ github.event.inputs.linux_arch }} GOOS=linux go build -o ./bin/terraform
 
       - name: Upload Terraform Binary as Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@ff15f0306b3f739f7b6fd43fb5d26cd321bd4de5 # v3
         with:
           name: terraform-${{ github.event.inputs.terraform_version }}-linux-${{ github.event.inputs.linux_arch }}
           path: terraform-source/bin/terraform
 
       - name: Create GitHub Release
         id: create_release
-        uses: actions/create-release@v1
+        uses: actions/create-release@0cb9c9b65d5d1901c1f53e5e66eaf4afd303e70e # v1
         with:
           tag_name: terraform-v${{ github.event.inputs.terraform_version }}-go-${{ github.event.inputs.go_version }}
           release_name: Terraform v${{ github.event.inputs.terraform_version }}-go-${{ github.event.inputs.go_version }}
@@ -61,7 +64,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload Terraform Binary to Release
-        uses: actions/upload-release-asset@v1
+        uses: actions/upload-release-asset@e8f9f06c4b078e705bd2ea027f0926603fc9b4d5 # v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: terraform-source/bin/terraform
